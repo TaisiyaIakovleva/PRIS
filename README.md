@@ -4,7 +4,7 @@
 
 Основные компоненты
 1. Импорты
-'''python
+```python
 import os
 import seaborn as sns
 from sklearn.metrics import confusion_matrix
@@ -18,23 +18,28 @@ from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-'''
+```
 3. Настройка Flask и Spark
 2.1 Создается Flask-приложение
 2.2 Определяются папки для загрузки файлов (uploads) и сохранения графиков (static/plots)
 2.3 Инициализируется Spark-сессия с настройками:
+```   
 spark = SparkSession.builder \
     .appName("BigDataApp") \
     .config("spark.eventLog.gcMetrics.enabled", "false") \
     .getOrCreate()3. Загрузка и обработка данных
+```
 При получении CSV-файла:
+```python
 file = request.files['file']
 file_path = os.path.join(UPLOAD_FOLDER, file.filename)
 file.save(file_path)
 
 # Чтение данных в Spark DataFrame
 df = spark.read.csv(file_path, header=True, inferSchema=True)
-df = df.dropna()  # Удаление пропущенных значений4. Анализ структуры данных
+df = df.dropna()  # Удаление пропущенных значений
+```
+4. Анализ структуры данных
 # Получение информации о типах столбцов
 numeric_cols = [f.name for f in df.schema.fields if isinstance(f.dataType, NumericType)]
 categorical_cols = [f.name for f in df.schema.fields if isinstance(f.dataType, StringType)]
