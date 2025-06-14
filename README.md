@@ -40,6 +40,7 @@ df = spark.read.csv(file_path, header=True, inferSchema=True)
 df = df.dropna()  # Удаление пропущенных значений
 ```
 4. Анализ структуры данных
+```python
 # Получение информации о типах столбцов
 numeric_cols = [f.name for f in df.schema.fields if isinstance(f.dataType, NumericType)]
 categorical_cols = [f.name for f in df.schema.fields if isinstance(f.dataType, StringType)]
@@ -47,7 +48,10 @@ categorical_cols = [f.name for f in df.schema.fields if isinstance(f.dataType, S
 target_col = numeric_cols[-1] if numeric_cols else categorical_cols[-1]
 feature_cols = [col for col in numeric_cols + categorical_cols if col != target_col]
 # Генерация preview данных
-preview_html = df.limit(10).toPandas().to_html(classes="data", index=False)5. Построение модели
+preview_html = df.limit(10).toPandas().to_html(classes="data", index=False)
+```
+5. Построение модели
+```python
 # Преобразование категориальных признаков
 indexers = [
     StringIndexer(inputCol=col, outputCol=col + "_indexed", handleInvalid='skip') 
@@ -72,9 +76,12 @@ evaluator = MulticlassClassificationEvaluator(
     predictionCol="prediction",
     metricName="accuracy"
 )
-accuracy = evaluator.evaluate(predictions)6. Визуализации
+accuracy = evaluator.evaluate(predictions)
+```
+6. Визуализации
 
 Матрица ошибок:
+```python
 preds = predictions.select("label", "prediction").dropna().toPandas()
 cm = confusion_matrix(preds["label"], preds["prediction"])
 
@@ -84,7 +91,10 @@ plt.xlabel("Predicted")
 plt.ylabel("Actual")
 plt.title("Confusion Matrix")
 plt.savefig(os.path.join(PLOT_FOLDER, 'confusion_matrix.png'))
-plt.close()Корреляционная матрица:
+plt.close()
+```
+Корреляционная матрица:
+```python
 numeric_df = df.select([f.name for f in df.schema.fields if isinstance(f.dataType, NumericType)])
 corr_pdf = numeric_df.toPandas().corr()
 
@@ -94,7 +104,10 @@ plt.title("Correlation Matrix")
 plt.xticks(rotation=45, ha='right')
 plt.tight_layout()
 plt.savefig(os.path.join(PLOT_FOLDER, 'correlation_matrix.png'))
-plt.close()7. Отображение результатов
+plt.close()
+```
+7. Отображение результатов
+```python
 return render_template('index.html',
                      show_form=False,
                      schema_info=df._jdf.schema().treeString(),
@@ -102,24 +115,27 @@ return render_template('index.html',
                      accuracy=round(accuracy, 4),
                      cm_plot_url='static/plots/confusion_matrix.png',
                      corr_plot_url='static/plots/correlation_matrix.png')
+```
 
 Полный цикл работы
-1). Пользователь загружает CSV-файл через веб-интерфейс
-2). Приложение:
+1) Пользователь загружает CSV-файл через веб-интерфейс
+2) Приложение:
 Сохраняет файл
 Загружает данные в Spark
 Анализирует структуру
 Строит модель
 Генерирует визуализации
-3). Результаты отображаются на странице:
+3) Результаты отображаются на странице:
 Информация о данных
 Превью таблицы
 Точность модели
 Графики анализа
 
 Пример вызова для тестирования:
+```python
 import requests
 
 files = {'file': open('dataset.csv', 'rb')}
 response = requests.post('http://localhost:5000', files=files)
 print(response.text)
+```
