@@ -1,10 +1,10 @@
-# PRIS
-## Работа с Big Data
+# PRIS - Работа с Big Data
 
 Это Flask-приложение, которое использует Apache Spark для обработки данных и построения модели логистической регрессии. Приложение позволяет загружать CSV-файлы, анализировать данные, строить модели машинного обучения и визуализировать результаты.
 
 Основные компоненты
 1. Импорты
+'''python
 import os
 import seaborn as sns
 from sklearn.metrics import confusion_matrix
@@ -17,7 +17,9 @@ from pyspark.ml import Pipeline
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 import matplotlib
 matplotlib.use('Agg')
-import matplotlib.pyplot as plt2. Настройка Flask и Spark
+import matplotlib.pyplot as plt
+'''
+3. Настройка Flask и Spark
 2.1 Создается Flask-приложение
 2.2 Определяются папки для загрузки файлов (uploads) и сохранения графиков (static/plots)
 2.3 Инициализируется Spark-сессия с настройками:
